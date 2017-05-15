@@ -1,0 +1,17 @@
+{
+  "name": "onebytebot",
+  "version": "0.0.1",
+  "description": "Telegram bot, which manage yardbirds of onebytecode team!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "oneBytecode",
+  "license": "ISC",
+  "dependencies": {
+    "bot-brother": "^2.1.5",
+    "dotenv": "^4.0.0",
+    "node-telegram-bot-api": "^0.27.1",
+    "telegram-node-bot": "^4.0.5"
+  }
+}

@@ -11,6 +11,8 @@
   "dependencies": {
     "bot-brother": "^2.1.5",
     "dotenv": "^4.0.0",
+    "fs": "0.0.1-security",
+    "jquery": "^3.2.1",
     "node-telegram-bot-api": "^0.27.1",
     "telegram-node-bot": "^4.0.5"
   }

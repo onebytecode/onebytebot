@@ -41,22 +41,20 @@ var greetings = function(context) {
 
 }
 var talk = function(context, newContext) {
-  console.log(`VALUES | ${context.data.stage}`);
-  var STAGE  = context.data.stage.split('_').slice(0 , 2)
+  console.log(`STAGE IS | ${context.data.stage}`);
+  var STAGE__ARR  = context.data.stage.split('_').slice(0 , 2)
   var STATUS = context.data.stage.split('_').slice(2 , 3)
   var ANSWER = newContext.answer
 
-  STATUS ?
-      STATUS == 'passed' ?
-          STAGE = STAGE[0] + '_' + (parseInt(STAGE[1]) + 1)
-          : STATUS == 'started' ?
-                STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
-                :  newContext.sendMessage('Кончились шаги :(')
-      : STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
-
+  // STATUS ?
+  //     STATUS == 'passed' ?
+  //         STAGE = STAGE[0] + '_' + (parseInt(STAGE[1]) + 1)
+  //         : STATUS == 'started' ?
+  //               STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
+  //               :  newContext.sendMessage('Кончились шаги :(')
+  //     : STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
+  STAGE = STAGE__ARR[0] + '_' + STAGE__ARR[1]
   var FILE   = './stages/' + STAGE + '.json'
-  console.log(`Talking with ${context.meta.user.name}`);
-  console.log(`Debug point status | ${STATUS}`);
   fs.readFile(FILE, (error, response) => {
     if(error){
       console.log(`RF | ${error}`);
@@ -66,8 +64,12 @@ var talk = function(context, newContext) {
       if(Object.keys(CHAT.text.answers).some((el) => { return el == ANSWER } )){
         Object.keys(CHAT.text.answers).forEach((el) => {
           if(el == ANSWER) {
-            context.data.stage = STAGE + '_' + Object.keys(CHAT.text.answers[el])
-            newContext.sendMessage(CHAT.text.answers[el][Object.keys(CHAT.text.answers[el])])
+            var ANSWER_STATUS = Object.keys(CHAT.text.answers[el])
+            var ANSWER_REDIRECT = Object.keys(CHAT.text.answers[el][ANSWER_STATUS])
+            var ANSWER_TEXT = CHAT.text.answers[el][ANSWER_STATUS][ANSWER_REDIRECT]
+            console.log(`DEBUG -----------\n ASNWER_STATUS ${ANSWER_STATUS}\nANSWER_REDIRECT ${ANSWER_REDIRECT}\nANSWER_TEXT ${ANSWER_TEXT}`);
+            context.data.stage = STAGE__ARR[0] + '_' + ANSWER_REDIRECT
+            newContext.sendMessage(ANSWER_TEXT)
           }
         })
       } else {

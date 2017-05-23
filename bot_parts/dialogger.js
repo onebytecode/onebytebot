@@ -6,6 +6,12 @@ var mhandler  = require('../modules/mongo_handler')
 var greetings = function(context) {
   context.data.user  = context.meta.user
   mhandler.addUser(context.data.user)
+  // context.bot.keyboard([
+  //   [{'answer1': 'answer1'}],
+  //   [{'answer2': {value: 'answer2'}}],
+  //   [{'answer3': 3}],
+  //   [{'answer4': {value: 4}}]
+  // ])
   context.data.user_answers = ''
   !context.session.memory ?
       context.session.memory = 'stage_1'
@@ -20,7 +26,16 @@ var greetings = function(context) {
         console.log(`RF | ${error}`);
       } else {
         var CHAT = JSON.parse(response)
-        context.sendMessage(CHAT.text.bot_ask.replace('<user_name>', context.data.user.first_name))
+        var options  =  []
+        Object.keys(CHAT.text.answers).forEach( (el) => {
+          console.log(`Key :: ${el}`)
+          var _arr = []
+          _arr.push({})
+          _arr[0][el] = el
+          options.push(_arr)
+        })
+        context.bot.keyboard(options)
+        context.sendMessage(CHAT.text.bot_ask.replace('<name_holder>', context.data.user.first_name))
         context.data.stage = 'stage_1_started'
         context.session.memory = 'stage_2'
       }
@@ -34,6 +49,15 @@ var greetings = function(context) {
         console.log(`RF | ${error}`);
       } else {
         var CHAT = JSON.parse(response)
+        var options  =  []
+        Object.keys(CHAT.text.answers).forEach( (el) => {
+          console.log(`Key :: ${el}`)
+          var _arr = []
+          _arr.push({})
+          _arr[0][el] = el
+          options.push(_arr)
+        })
+        context.bot.keyboard(options)
         context.sendMessage(CHAT.text.bot_ask.replace('<name_holder>', context.data.user.first_name))
         context.data.stage = STAGE.join('_') + '_started'
         context.data.memory = STAGE[0] + '_' + (parseInt(STAGE[1]) + 1)
@@ -60,13 +84,15 @@ var talk = function(context, newContext) {
   STAGE = STAGE__ARR[0] + '_' + STAGE__ARR[1]
   var FILE   = './stages/' + STAGE + '.json'
   fs.readFile(FILE, (error, response) => {
-    if(error){
+    if(error) {
       console.log(`RF | ${error}`);
       newContext.sendMessage('На самом деле у меня все, спасибо что уделил мне пару минут своего времени!')
+      newContext.bot.keyboard([])
       resender.resend(context)
     } else {
       context.data.user_answers += (newContext.answer + ' | ' )
       var CHAT = JSON.parse(response)
+
       if(Object.keys(CHAT.text.answers).some((el) => {
         if(el === 'regexp') {
           if (ANSWER !== 'все') {
@@ -84,7 +110,26 @@ var talk = function(context, newContext) {
             var ANSWER_TEXT = CHAT.text.answers[el][ANSWER_STATUS][ANSWER_REDIRECT]
             console.log(`DEBUG -----------\n ASNWER_STATUS ${ANSWER_STATUS}\nANSWER_REDIRECT ${ANSWER_REDIRECT}\nANSWER_TEXT ${ANSWER_TEXT}`);
             context.data.stage = STAGE__ARR[0] + '_' + ANSWER_REDIRECT
-            newContext.sendMessage(ANSWER_TEXT)
+            if(context.data.stage === 'stage_3') {
+              fs.readFile('./stages/stage_3.json', (error, result) => {
+                var options  =  []
+                var _result  =  JSON.parse(result)
+                Object.keys(_result.text.answers).forEach( (el) => {
+                  console.log(`Key :: ${el}`)
+                  var _arr = []
+                  _arr.push({})
+                  _arr[0][el] = el
+                  options.push(_arr)
+                })
+                newContext.bot.keyboard(options)
+              })
+            } else {
+              newContext.bot.keyboard([])
+            }
+            setTimeout(() => {
+              newContext.sendMessage(ANSWER_TEXT)
+            }, 250)
+
           } else if (ANSWER === '<photo>') {
             newContext.sendMessage('Фото получено!')
           }

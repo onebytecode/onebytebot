@@ -2,7 +2,7 @@
   "name": "greetings",
   "status": "incomplete",
   "text": {
-    "bot_ask": "Привет! Я бот студии oneBytecode, мы ищем в команду людей, ты хочешь присоединиться?",
+    "bot_ask": "Привет <name_holder>! Я бот студии oneBytecode, мы ищем в команду людей, ты хочешь присоединиться?",
     "answers": {
       "нет": {
         "failed": {

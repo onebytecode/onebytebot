@@ -1,13 +1,15 @@
+require('dotenv').config()
 var self      = this
 var fs        = require('fs')
+var resender  = require('./resender')
 var greetings = function(context) {
   context.data.user  = context.meta.user
+  context.data.user_answers = ''
   !context.session.memory ?
       context.session.memory = 'stage_1'
       : ''
   context.data.stage = context.session.memory
   var STAGE  = context.data.stage
-  console.log(`STAGE FROM GREETINGS ${STAGE}`);
   var STATUS = context.data.stage.split('_').slice(2 , 3)
   STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
   if(!context.data.stage){
@@ -16,10 +18,9 @@ var greetings = function(context) {
         console.log(`RF | ${error}`);
       } else {
         var CHAT = JSON.parse(response)
-        context.sendMessage(CHAT.text.bot_ask)
+        context.sendMessage(CHAT.text.bot_ask.replace('<name_holder>', context.data.user.first_name))
         context.data.stage = 'stage_1_started'
         context.session.memory = 'stage_2'
-        console.log(``);
       }
     })
   } else {
@@ -31,7 +32,7 @@ var greetings = function(context) {
         console.log(`RF | ${error}`);
       } else {
         var CHAT = JSON.parse(response)
-        context.sendMessage(CHAT.text.bot_ask)
+        context.sendMessage(CHAT.text.bot_ask.replace('<name_holder>', context.data.user.first_name))
         context.data.stage = STAGE.join('_') + '_started'
         context.data.memory = STAGE[0] + '_' + (parseInt(STAGE[1]) + 1)
         console.log(`Memory set to ${context.data.stage}`);
@@ -44,22 +45,17 @@ var talk = function(context, newContext) {
   console.log(`STAGE IS | ${context.data.stage}`);
   var STAGE__ARR  = context.data.stage.split('_').slice(0 , 2)
   var STATUS = context.data.stage.split('_').slice(2 , 3)
-  var ANSWER = newContext.answer
+  var ANSWER = newContext.answer.toLowerCase()
 
-  // STATUS ?
-  //     STATUS == 'passed' ?
-  //         STAGE = STAGE[0] + '_' + (parseInt(STAGE[1]) + 1)
-  //         : STATUS == 'started' ?
-  //               STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
-  //               :  newContext.sendMessage('Кончились шаги :(')
-  //     : STAGE = STAGE[0] + '_' + parseInt(STAGE[1])
   STAGE = STAGE__ARR[0] + '_' + STAGE__ARR[1]
   var FILE   = './stages/' + STAGE + '.json'
   fs.readFile(FILE, (error, response) => {
     if(error){
       console.log(`RF | ${error}`);
       newContext.sendMessage('У нас кончились уроки, так что сорян, как санек отбухает доделаем')
+      resender.resend(context)
     } else {
+      context.data.user_answers += (newContext.answer + ' | ' )
       var CHAT = JSON.parse(response)
       if(Object.keys(CHAT.text.answers).some((el) => { return el == ANSWER } )){
         Object.keys(CHAT.text.answers).forEach((el) => {

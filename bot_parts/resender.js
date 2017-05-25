@@ -1,4 +1,3 @@
-require('dotenv').config()
 var CHAT_ID = process.env.NG_ID
 var resend = ((context) => {
   var ANSWERS = context.data.user_answers.split( ' | ')

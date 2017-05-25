@@ -1,4 +1,3 @@
-require('dotenv').config()
 var bb = require('bot-brother')
 var bot = bb({
   key: process.env.TG_BOT_API_KEY,
@@ -17,6 +16,7 @@ bot.command('start')
   CONTEXT = ctx
   return dialogger.greetings(ctx)
 })
+// .keyboard()
 .answer(function (ctx) {
   return dialogger.talk(CONTEXT, ctx)
 })
@@ -35,4 +35,18 @@ bot.command('show_users')
 bot.command('drop_users')
   .invoke( (ctx) => {
     return uLogger.dropAllUsers(ctx)
+  })
+  bot.command('command1')
+  .invoke(function (ctx) {
+    return ctx.sendMessage('Hello')
+  })
+  .keyboard([
+    [{'answer1': 'answer1'}],
+    [{'answer2': {value: 'answer2'}}],
+    [{'answer3': 3}],
+    [{'answer4': {value: 4}}]
+  ])
+  .answer(function (ctx) {
+    ctx.data.answer = ctx.answer;
+    return ctx.sendMessage('Your answer is <%=answer%>');
   })

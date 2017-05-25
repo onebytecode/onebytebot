@@ -1,11 +1,16 @@
-const mongoClient    =  require("mongodb").MongoClient
-const mongo_url      =  process.env.MONGOD_URL
-const mongo_handler  =  this
+require('dotenv').config()
+const mongoClient      =  require("mongodb").MongoClient
+const mongo_url        =  process.env.MONGOD_URL
+const mongo_handler    =  this
+const users_collection = process.env.USERS_COLLECTION
+console.log(`Test ${mongo_url}\n${users_collection}`);
 mongo_handler.execute  =  (func) => {
   mongoClient.connect(mongo_url, (error, db) => {
-    this.users =  db.collection(process.env.USERS_COLLECTION)
-    if(error) console.log(`ERROR :: ${error}`)
-    else var result = func()
+    if(error){ console.log(`ERROR :: ${error}`)}
+    else {
+      this.users =  db.collection(users_collection)
+      var result = func()
+    }
     db.close()
   })
 }

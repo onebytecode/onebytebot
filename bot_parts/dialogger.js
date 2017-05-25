@@ -1,3 +1,4 @@
+require('dotenv').config()
 var self      = this
 var fs        = require('fs')
 var resender  = require('./resender')

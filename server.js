@@ -1,3 +1,4 @@
+require('dotenv').config()
 var bb = require('bot-brother')
 var bot = bb({
   key: process.env.TG_BOT_API_KEY,

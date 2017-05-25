@@ -3,7 +3,7 @@ const mongo_url      =  process.env.MONGOD_URL
 const mongo_handler  =  this
 mongo_handler.execute  =  (func) => {
   mongoClient.connect(mongo_url, (error, db) => {
-    this.users =  db.collection('users')
+    this.users =  db.collection(process.env.USERS_COLLECTION)
     if(error) console.log(`ERROR :: ${error}`)
     else var result = func()
     db.close()

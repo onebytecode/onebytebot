@@ -7,23 +7,23 @@ mongo_handler.execute  =  (func) => {
   mongoClient.connect(mongo_url, (error, db) => {
     if(error){ console.log(`ERROR :: ${error}`)}
     else {
-      this.users =  db.collection(users_collection)
+      mongo_handler.users =  db.collection(users_collection)
       var result = func()
+      db.close()
     }
-    db.close()
   })
 }
 
 mongo_handler.addUser  =  (user) => {
   mongo_handler.execute( () => {
     if (user) {
-      this.users.find({id: user.id}).toArray( (error, result) => {
+      mongo_handler.users.find({id: user.id}).toArray( (error, result) => {
         if(error) {
-          console.log(`ERROR ${error}`);
+          console.log(`ERROR ${error}`)
         } else if(result.length === 0) {
           console.log(`Inserting ${user.first_name}`)
           mongo_handler.execute( () => {
-            this.users.insertOne(user, (error, result) => {
+            mongo_handler.users.insertOne(user, (error, result) => {
               if (error) console.log(`Err :: ${error}`)
               else console.log(`Add user complete!\n${Object.keys(result.ops[0])}`)
             })
@@ -41,7 +41,7 @@ mongo_handler.addMessageToUser  =  (message, user) => {
   mongo_handler.execute( () => {
     console.log(`Adding message to ${user.first_name}`)
     var _messages = []
-    this.users.findOne({ id: user.id }, (error, result) => {
+    mongo_handler.users.findOne({ id: user.id }, (error, result) => {
       if(error) {
         console.log(`ERROR :: ${error}`)
       } else {
@@ -50,7 +50,7 @@ mongo_handler.addMessageToUser  =  (message, user) => {
             : console.log(`User has no messages`)
         _messages.push(message)
         mongo_handler.execute( () => {
-          this.users.updateOne(
+          mongo_handler.users.updateOne(
             { id: user.id },
             { $set: { messages: _messages }}, (error, result) => {
               if(error) console.log(`ERROR :: ${error}`)

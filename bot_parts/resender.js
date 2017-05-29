@@ -1,4 +1,4 @@
-var CHAT_ID = process.env.NG_ID
+var CHAT_ID = process.env.OBC_ID
 var resend = ((context) => {
   var ANSWERS = context.data.user_answers.split( ' | ')
   console.log(`Context is ${context.data.user.first_name}`);

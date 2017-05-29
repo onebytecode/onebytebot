@@ -1,3 +1,4 @@
+// require('dotenv').config()
 const mongoClient      =  require("mongodb").MongoClient
 const mongo_url        =  process.env.MONGOD_URL
 const mongo_handler    =  this

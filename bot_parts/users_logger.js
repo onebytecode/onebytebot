@@ -1,3 +1,4 @@
+// require('dotenv').config()
 const users_logger  =  this
 const mhandler      =  require('../modules/mongo_handler')
 users_logger.getAllUsers  =  (context) => {

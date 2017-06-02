@@ -1,3 +1,4 @@
+// require('dotenv').config()
 var self      = this
 var fs        = require('fs')
 var resender  = require('./resender')
@@ -5,12 +6,7 @@ var mhandler  = require('../modules/mongo_handler')
 var greetings = function(context) {
   context.data.user  = context.meta.user
   mhandler.addUser(context.data.user)
-  // context.bot.keyboard([
-  //   [{'answer1': 'answer1'}],
-  //   [{'answer2': {value: 'answer2'}}],
-  //   [{'answer3': 3}],
-  //   [{'answer4': {value: 4}}]
-  // ])
+  console.log(`Context ${context.meta.chat.id}`);
   context.data.user_answers = ''
   !context.session.memory ?
       context.session.memory = 'stage_1'
